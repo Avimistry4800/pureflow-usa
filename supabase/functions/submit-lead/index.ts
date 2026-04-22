@@ -1,8 +1,13 @@
 // Edge function: submit-lead
 // Public endpoint that validates + inserts a lead row using the service role.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
-import { corsHeaders } from "https://esm.sh/@supabase/supabase-js@2.45.0/cors";
 import { z } from "https://esm.sh/zod@3.23.8";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+};
 
 const schema = z.object({
   name: z.string().trim().min(1).max(120),
