@@ -1,16 +1,30 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import Preloader from "@/components/chrome/Preloader";
+import CustomCursor from "@/components/chrome/CustomCursor";
+import Nav from "@/components/chrome/Nav";
+import Hero from "@/components/hero/Hero";
+import Threat from "@/components/threat/Threat";
+import Solution from "@/components/solution/Solution";
+import Proof from "@/components/proof/Proof";
+import ConsultationForm from "@/components/form/ConsultationForm";
+import Footer from "@/components/chrome/Footer";
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
+const Index = () => {
+  const [, setReady] = useState(false);
+
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
-    </div>
+    <main className="relative">
+      <Preloader onDone={() => setReady(true)} />
+      <CustomCursor />
+      <Nav />
+      <Hero />
+      <Threat />
+      <Solution />
+      <Proof />
+      <ConsultationForm />
+      <Footer />
+    </main>
   );
 };
-
-const Index = PlaceholderIndex;
 
 export default Index;
