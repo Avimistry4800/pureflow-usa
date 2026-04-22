@@ -1,6 +1,5 @@
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useRef, useMemo, useEffect, useState, lazy, Suspense } from "react";
-import * as THREE from "three";
+import { useRef, useEffect, useState } from "react";
+import purifierImg from "@/assets/purifier.png";
 
 const stages = [
   { id: "01", code: "RO-MEM", name: "Reverse Osmosis Membrane", desc: "Sub-nanometer pores reject 99.9% of dissolved solids, PFAS and heavy metals.", color: "#5BE9FF" },
@@ -9,115 +8,106 @@ const stages = [
   { id: "04", code: "UV-STR", name: "UV-C Sterilization Chamber", desc: "265nm dose denatures viral DNA. Guardian-grade microbial control.", color: "#E8F6FF" },
 ];
 
-function Purifier({ explode }: { explode: number }) {
-  const group = useRef<THREE.Group>(null);
-
-  // Procedural cylindrical filter stack
-  const segments = useMemo(() => {
-    return stages.map((s, i) => ({
-      ...s,
-      y: i - (stages.length - 1) / 2,
-    }));
-  }, []);
-
-  useFrame((state) => {
-    if (!group.current) return;
-    group.current.rotation.y = state.clock.elapsedTime * 0.25;
-    group.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.4) * 0.06;
-  });
+/**
+ * Product photography stage — replaces the procedural R3F model.
+ * Real product render with scroll-driven parallax, glow rings, scan line and hotspot reveal.
+ */
+function PurifierStage({ explode, active }: { explode: number; active: number }) {
+  const hotspots = [
+    { top: "20%" },
+    { top: "38%" },
+    { top: "58%" },
+    { top: "78%" },
+  ];
 
   return (
-    <group ref={group}>
-      {/* Outer chrome shell — fades as we explode */}
-      <mesh>
-        <cylinderGeometry args={[0.95, 0.95, 4.2, 64, 1, true]} />
-        <meshPhysicalMaterial
-          color="#0B1220"
-          metalness={1}
-          roughness={0.15}
-          transmission={0.4}
-          thickness={1.2}
-          transparent
-          opacity={Math.max(0.05, 0.55 - explode * 0.55)}
-          side={THREE.DoubleSide}
-          emissive="#5BE9FF"
-          emissiveIntensity={0.05}
+    <div className="relative h-full w-full">
+      {/* Ambient cyan glow */}
+      <div
+        className="absolute left-1/2 top-1/2 h-[80%] w-[80%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
+        style={{
+          background: "radial-gradient(circle, hsl(var(--primary) / 0.45), transparent 65%)",
+          opacity: 0.4 + explode * 0.5,
+        }}
+      />
+
+      {/* Concentric rings */}
+      {[0, 1, 2].map((i) => (
+        <div
+          key={i}
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary/20"
+          style={{
+            width: `${50 + i * 18 + explode * 10}%`,
+            height: `${50 + i * 18 + explode * 10}%`,
+            opacity: (0.5 - i * 0.15) * (0.5 + explode * 0.5),
+            transform: `translate(-50%, -50%) rotate(${explode * 90 * (i % 2 === 0 ? 1 : -1)}deg)`,
+            transition: "transform 0.3s ease-out, opacity 0.3s ease-out",
+          }}
         />
-      </mesh>
-
-      {/* Caps */}
-      {[2.1, -2.1].map((y, i) => (
-        <mesh key={i} position={[0, y, 0]}>
-          <cylinderGeometry args={[0.95, 0.95, 0.12, 64]} />
-          <meshStandardMaterial color="#13203A" metalness={1} roughness={0.3} />
-        </mesh>
       ))}
 
-      {/* Filter segments */}
-      {segments.map((s, i) => (
-        <group key={s.id} position={[0, s.y * (0.85 + explode * 0.9), 0]}>
-          <mesh>
-            <cylinderGeometry args={[0.78, 0.78, 0.7, 48]} />
-            <meshPhysicalMaterial
-              color={s.color}
-              emissive={s.color}
-              emissiveIntensity={0.4 + explode * 0.6}
-              metalness={0.4}
-              roughness={0.25}
-              transmission={0.6}
-              thickness={0.5}
-              transparent
-              opacity={0.85}
+      {/* Product render */}
+      <img
+        src={purifierImg}
+        alt="WPL Liquid purification system — chrome cylinder with glowing cyan core"
+        loading="lazy"
+        width={1080}
+        height={1920}
+        className="absolute left-1/2 top-1/2 h-[88%] w-auto object-contain drop-shadow-[0_30px_60px_hsl(var(--primary)/0.35)]"
+        style={{
+          transform: `translate(-50%, calc(-50% + ${(explode - 0.5) * -30}px)) scale(${1 + explode * 0.06})`,
+          transition: "transform 0.2s ease-out",
+          filter: `brightness(${1 + explode * 0.15}) contrast(${1 + explode * 0.05})`,
+        }}
+      />
+
+      {/* Sweeping scan line */}
+      <div
+        className="pointer-events-none absolute left-0 right-0 h-[2px]"
+        style={{
+          top: `${15 + explode * 70}%`,
+          background:
+            "linear-gradient(90deg, transparent, hsl(var(--primary)) 50%, transparent)",
+          opacity: explode > 0.05 && explode < 0.95 ? 0.9 : 0,
+          boxShadow: "0 0 20px hsl(var(--primary))",
+        }}
+      />
+
+      {/* Hotspots */}
+      {hotspots.map((h, i) => (
+        <div
+          key={i}
+          className="pointer-events-none absolute left-[58%] -translate-y-1/2"
+          style={{
+            top: h.top,
+            opacity: explode > 0.2 ? 1 : 0,
+            transition: "opacity 0.4s ease-out",
+          }}
+        >
+          <div
+            className={`flex items-center gap-3 ${
+              i === active ? "scale-110" : "scale-100"
+            } transition-transform`}
+          >
+            <span
+              className={`block h-2 w-2 rounded-full ${
+                i === active ? "bg-primary shadow-[0_0_12px_hsl(var(--primary))]" : "bg-chrome/60"
+              }`}
             />
-          </mesh>
-          {/* Ribbed indicator */}
-          {Array.from({ length: 12 }).map((_, k) => (
-            <mesh key={k} position={[0, 0, 0]} rotation={[0, (k / 12) * Math.PI * 2, 0]}>
-              <boxGeometry args={[0.02, 0.7, 0.82]} />
-              <meshStandardMaterial color="#05070D" metalness={0.6} roughness={0.4} />
-            </mesh>
-          ))}
-          {/* Glow ring on explode */}
-          <mesh rotation={[Math.PI / 2, 0, 0]}>
-            <ringGeometry args={[0.85, 0.92 + explode * 0.4, 64]} />
-            <meshBasicMaterial color={s.color} transparent opacity={explode * 0.6} side={THREE.DoubleSide} />
-          </mesh>
-        </group>
+            <span className="h-px w-10 bg-primary/40" />
+            <span
+              className={`font-mono text-[10px] uppercase tracking-[0.28em] ${
+                i === active ? "text-primary" : "text-muted-foreground"
+              }`}
+            >
+              {stages[i].code}
+            </span>
+          </div>
+        </div>
       ))}
-
-      {/* Connecting beam through center when exploded */}
-      <mesh>
-        <cylinderGeometry args={[0.02, 0.02, 4.2 + explode * 4, 8]} />
-        <meshBasicMaterial color="#5BE9FF" transparent opacity={0.4 + explode * 0.4} />
-      </mesh>
-    </group>
+    </div>
   );
 }
-
-function Scene({ explode }: { explode: number }) {
-  const { camera } = useThree();
-  useEffect(() => {
-    camera.position.set(3.6, 1.4, 4.6);
-    camera.lookAt(0, 0, 0);
-  }, [camera]);
-
-  return (
-    <>
-      <ambientLight intensity={0.4} />
-      <pointLight position={[3, 5, 5]} intensity={1.4} color="#5BE9FF" />
-      <pointLight position={[-4, -3, -2]} intensity={0.8} color="#6F4CFF" />
-      <Purifier explode={explode} />
-    </>
-  );
-}
-
-const PurifierCanvas = ({ explode }: { explode: number }) => (
-  <Canvas dpr={[1, 1.5]} gl={{ antialias: true, powerPreference: "high-performance" }}>
-    <Scene explode={explode} />
-  </Canvas>
-);
-
-const LazyCanvas = lazy(() => Promise.resolve({ default: PurifierCanvas }));
 
 const Solution = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -155,11 +145,9 @@ const Solution = () => {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_50%,hsl(var(--primary)/0.12),transparent_60%)]" />
 
         <div className="relative z-10 grid h-full w-full grid-cols-1 md:grid-cols-2">
-          {/* 3D stage */}
+          {/* Product stage */}
           <div className="relative h-[55vh] md:h-full">
-            <Suspense fallback={<div className="h-full w-full bg-gradient-deep" />}>
-              <LazyCanvas explode={explode} />
-            </Suspense>
+            <PurifierStage explode={explode} active={active} />
 
             {/* Stage label overlay */}
             <div className="pointer-events-none absolute left-6 top-28 sm:left-10">
@@ -171,19 +159,17 @@ const Solution = () => {
               </h2>
             </div>
 
-            {/* Floating coords */}
             <div className="pointer-events-none absolute bottom-6 left-6 font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground sm:left-10">
               MODEL · WPL-LIQ-001
             </div>
             <div className="pointer-events-none absolute bottom-6 right-6 font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
-              EXPLODE · {(explode * 100).toFixed(0)}%
+              REVEAL · {(explode * 100).toFixed(0)}%
             </div>
           </div>
 
           {/* Stage info panel */}
           <div className="relative flex items-center justify-start px-6 py-12 sm:px-12 md:px-16">
             <div className="w-full max-w-md">
-              {/* Stage list */}
               <div className="mb-8 space-y-1">
                 {stages.map((s, i) => (
                   <button
@@ -220,7 +206,6 @@ const Solution = () => {
                 ))}
               </div>
 
-              {/* Active detail */}
               <div key={active} className="surface-glass rounded-lg p-6">
                 <div className="flex items-center justify-between border-b border-border/60 pb-3">
                   <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-primary">
@@ -237,7 +222,7 @@ const Solution = () => {
               </div>
 
               <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
-                Scroll to disassemble →
+                Scroll to reveal →
               </p>
             </div>
           </div>
