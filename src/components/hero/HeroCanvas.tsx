@@ -1,9 +1,12 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useMemo, useRef, useEffect } from "react";
+import { forwardRef, useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { waterFragment, waterVertex } from "@/shaders/water";
 
-const Plane = ({ mouse }: { mouse: React.MutableRefObject<{ x: number; y: number; t: number }> }) => {
+const Plane = forwardRef<THREE.Mesh, { mouse: React.MutableRefObject<{ x: number; y: number; t: number }> }>(function Plane(
+  { mouse },
+  ref,
+) {
   const matRef = useRef<THREE.ShaderMaterial>(null);
   const { size, viewport } = useThree();
 
@@ -37,7 +40,7 @@ const Plane = ({ mouse }: { mouse: React.MutableRefObject<{ x: number; y: number
   });
 
   return (
-    <mesh>
+    <mesh ref={ref}>
       <planeGeometry args={[viewport.width, viewport.height, 1, 1]} />
       <shaderMaterial
         ref={matRef}
@@ -47,9 +50,9 @@ const Plane = ({ mouse }: { mouse: React.MutableRefObject<{ x: number; y: number
       />
     </mesh>
   );
-};
+});
 
-const HeroCanvas = () => {
+const HeroCanvas = forwardRef<HTMLDivElement, Record<string, never>>(function HeroCanvas(_, ref) {
   const mouse = useRef({ x: 0.5, y: 0.5, t: 0 });
 
   useEffect(() => {
@@ -74,15 +77,17 @@ const HeroCanvas = () => {
   }, []);
 
   return (
-    <Canvas
-      orthographic
-      camera={{ position: [0, 0, 1], zoom: 1 }}
-      dpr={[1, 1.5]}
-      gl={{ antialias: false, powerPreference: "high-performance" }}
-    >
-      <Plane mouse={mouse} />
-    </Canvas>
+    <div ref={ref} className="h-full w-full">
+      <Canvas
+        orthographic
+        camera={{ position: [0, 0, 1], zoom: 1 }}
+        dpr={[1, 1.5]}
+        gl={{ antialias: false, powerPreference: "high-performance" }}
+      >
+        <Plane mouse={mouse} />
+      </Canvas>
+    </div>
   );
-};
+});
 
 export default HeroCanvas;

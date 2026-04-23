@@ -33,22 +33,23 @@ const LiquidTransition = ({
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Bell curve: peak at t=0.5 → fully covering, edges → invisible
+  // Bell curve: peak at t=0.5, edges fade out so the wipe overlaps sections without leaving a blank band.
   const intensity = Math.sin(Math.PI * Math.max(0, Math.min(1, t)));
-  // Always slide upward as user scrolls down so the wipe is visible regardless of flip.
-  const translateY = (1 - t) * 100; // %
+  const translateY = (0.5 - t) * 48;
+  const pathOpacity = 0.32 + intensity * 0.5;
+  const glowOpacity = 0.16 + intensity * 0.34;
 
   return (
     <div
       ref={ref}
       aria-hidden
-      className="relative h-[20vh] w-full overflow-hidden bg-background"
+      className="pointer-events-none relative z-20 -my-[10vh] h-[20vh] w-full overflow-visible"
     >
       {/* Liquid blob */}
       <svg
         viewBox="0 0 1440 400"
         preserveAspectRatio="none"
-        className="absolute inset-x-0 top-0 h-full w-full"
+        className="absolute inset-x-0 top-1/2 h-full w-full -translate-y-1/2"
         style={{
           transform: `translateY(${translateY}%) scaleY(${flip ? -1 : 1})`,
           transition: "transform 0.05s linear",
@@ -65,8 +66,20 @@ const LiquidTransition = ({
           </filter>
         </defs>
 
-        {/* Background fill so the wipe fully covers */}
-        <rect x="0" y="0" width="1440" height="400" fill="hsl(var(--background))" />
+        {/* Soft liquid body */}
+        <path
+          d={`M0,${flip ? 400 : 0}
+              C 240,${flip ? 320 - intensity * 60 : 80 + intensity * 60}
+                480,${flip ? 360 + intensity * 40 : 40 - intensity * 40}
+                720,${flip ? 320 - intensity * 80 : 80 + intensity * 80}
+              C 960,${flip ? 360 + intensity * 50 : 40 - intensity * 50}
+                1200,${flip ? 320 - intensity * 70 : 80 + intensity * 70}
+                1440,${flip ? 340 : 60}
+              L 1440,${flip ? 0 : 400} L 0,${flip ? 0 : 400} Z`}
+          fill="url(#liquid-grad)"
+          filter="url(#liquid-blur)"
+          opacity={glowOpacity}
+        />
 
         {/* Organic blob edge */}
         <path
@@ -80,7 +93,7 @@ const LiquidTransition = ({
               L 1440,${flip ? 0 : 400} L 0,${flip ? 0 : 400} Z`}
           fill="url(#liquid-grad)"
           filter="url(#liquid-blur)"
-          opacity={0.9}
+          opacity={pathOpacity}
         />
 
         {/* Highlight ribbon */}
