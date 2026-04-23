@@ -35,10 +35,8 @@ class RO {
   unobserve() {}
   disconnect() {}
 }
-// @ts-expect-error test shim
-window.ResizeObserver = RO;
-// @ts-expect-error test shim
-global.ResizeObserver = RO;
+(window as unknown as { ResizeObserver: typeof RO }).ResizeObserver = RO;
+(globalThis as unknown as { ResizeObserver: typeof RO }).ResizeObserver = RO;
 
 // scrollTo no-op
 window.scrollTo = vi.fn() as unknown as typeof window.scrollTo;
