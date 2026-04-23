@@ -365,10 +365,26 @@ const Threat = () => {
                   });
                   return (
                     <div className="mt-7 border-t border-border/60 pt-5">
-                      <div className="flex items-baseline justify-between">
-                        <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
-                          Concentration · PPM
-                        </span>
+                      <div className="flex items-baseline justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
+                            Concentration · PPM
+                          </span>
+                          <button
+                            type="button"
+                            onClick={toggleMuted}
+                            aria-pressed={!muted}
+                            aria-label={muted ? "Unmute concentration meter sound" : "Mute concentration meter sound"}
+                            className="group inline-flex h-6 items-center gap-1.5 rounded-full border border-border/70 bg-background/40 px-2 font-mono text-[9px] uppercase tracking-[0.22em] text-muted-foreground transition-colors hover:border-primary/60 hover:text-chrome"
+                          >
+                            <span
+                              className="block h-1.5 w-1.5 rounded-full transition-colors"
+                              style={{ background: muted ? "hsl(var(--muted-foreground))" : "hsl(var(--primary))", boxShadow: muted ? "none" : "0 0 8px hsl(var(--primary))" }}
+                              aria-hidden
+                            />
+                            {muted ? "Sound off" : "Sound on"}
+                          </button>
+                        </div>
                         <div className="flex items-baseline gap-2">
                           <span className="font-display text-2xl font-light tabular-nums text-chrome sm:text-3xl">
                             {display}
