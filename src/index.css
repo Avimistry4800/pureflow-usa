@@ -80,7 +80,13 @@
     font-family: 'Inter', -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     background: hsl(var(--background));
-    overflow-x: hidden;
+  }
+
+  body {
+    /* Clip horizontal overflow without becoming a scroll container.
+       Using overflow-x:hidden on html/body breaks position: sticky
+       descendants in Chromium — `overflow-x: clip` does not. */
+    overflow-x: clip;
   }
 
   body {
