@@ -34,9 +34,9 @@ const LiquidTransition = ({
   }, []);
 
   // Bell curve: peak at t=0.5 → fully covering, edges → invisible
-  const intensity = Math.sin(Math.PI * t);
+  const intensity = Math.sin(Math.PI * Math.max(0, Math.min(1, t)));
+  // Always slide upward as user scrolls down so the wipe is visible regardless of flip.
   const translateY = (1 - t) * 100; // %
-  const dir = flip ? -1 : 1;
 
   return (
     <div
@@ -50,7 +50,7 @@ const LiquidTransition = ({
         preserveAspectRatio="none"
         className="absolute inset-x-0 top-0 h-full w-full"
         style={{
-          transform: `translateY(${dir * translateY}%)`,
+          transform: `translateY(${translateY}%) scaleY(${flip ? -1 : 1})`,
           transition: "transform 0.05s linear",
         }}
       >
