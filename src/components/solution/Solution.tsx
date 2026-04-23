@@ -136,11 +136,11 @@ const Solution = () => {
     <section
       id="solution"
       ref={sectionRef}
-      className="relative bg-background"
+      className="relative z-0 bg-background"
       style={{ height: "360vh" }}
       aria-label="The system"
     >
-      <div className="sticky top-0 flex h-[100svh] overflow-hidden">
+      <div className="sticky top-0 flex h-screen overflow-hidden">
         <div className="absolute inset-0 grid-noise opacity-40" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_50%,hsl(var(--primary)/0.12),transparent_60%)]" />
 

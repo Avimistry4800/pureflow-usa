@@ -39,12 +39,12 @@ const Threat = () => {
     <section
       id="threat"
       ref={sectionRef}
-      className="relative bg-background"
+      className="relative z-0 bg-background"
       style={{ height: "320vh" }}
       aria-label="The invisible threat"
     >
-      {/* Sticky stage */}
-      <div className="sticky top-0 flex h-[100svh] flex-col overflow-hidden">
+      {/* Sticky stage — h-screen matches parent's vh-based height */}
+      <div className="sticky top-0 flex h-screen flex-col overflow-hidden">
         {/* Background gradient that intensifies with scroll */}
         <div
           className="absolute inset-0 transition-opacity duration-700"
@@ -159,7 +159,7 @@ const Threat = () => {
         </div>
 
         {/* Vertical progress */}
-        <div className="absolute right-4 top-1/2 z-10 flex h-32 -translate-y-1/2 flex-col items-center gap-2 sm:right-8">
+        <div className="absolute right-6 top-1/2 z-10 flex h-32 -translate-y-1/2 flex-col items-center gap-2 sm:right-10">
           <span className="font-mono text-[9px] uppercase tracking-[0.28em] text-muted-foreground">Dive</span>
           <div className="relative h-full w-px bg-border">
             <div
