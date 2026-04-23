@@ -9,10 +9,8 @@ import { useEffect, useRef, useState } from "react";
  * sweeps and the act caption fades in.
  */
 const LiquidTransition = ({
-  label,
   flip = false,
 }: {
-  label?: string;
   flip?: boolean;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
