@@ -1,7 +1,6 @@
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMagnetic } from "@/lib/useMagnetic";
-
-const HeroCanvas = lazy(() => import("./HeroCanvas"));
+import HeroCanvas from "./HeroCanvas";
 
 const Hero = () => {
   const ctaRef = useMagnetic<HTMLAnchorElement>(0.3);
@@ -17,9 +16,7 @@ const Hero = () => {
     <section className="relative h-[100svh] w-full overflow-hidden bg-background">
       {/* WebGL backdrop */}
       <div className="absolute inset-0">
-        <Suspense fallback={<div className="absolute inset-0 bg-gradient-deep" />}>
-          <HeroCanvas />
-        </Suspense>
+        <HeroCanvas />
       </div>
 
       {/* Overlays */}
