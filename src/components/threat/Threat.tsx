@@ -295,6 +295,9 @@ const Threat = () => {
           })}
         </div>
 
+        {/* Contaminant-specific animated layer */}
+        <ContaminantField active={active} progress={progress} />
+
         {/* Header */}
         <div className="relative z-10 px-6 pt-28 sm:px-12">
           <div className="container mx-auto flex flex-col gap-3">
