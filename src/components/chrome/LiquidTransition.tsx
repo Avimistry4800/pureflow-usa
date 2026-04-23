@@ -9,10 +9,8 @@ import { useEffect, useRef, useState } from "react";
  * sweeps and the act caption fades in.
  */
 const LiquidTransition = ({
-  label,
   flip = false,
 }: {
-  label?: string;
   flip?: boolean;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -118,16 +116,6 @@ const LiquidTransition = ({
             />
           </svg>
 
-          {label && (
-            <div
-              className="pointer-events-none absolute inset-0 flex items-center justify-center"
-              style={{ opacity: intensity }}
-            >
-              <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-chrome mix-blend-difference">
-                ✦ {label} ✦
-              </span>
-            </div>
-          )}
         </div>
       )}
     </>

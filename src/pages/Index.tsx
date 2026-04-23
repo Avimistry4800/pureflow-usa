@@ -19,13 +19,13 @@ const Index = () => {
       <CustomCursor />
       <Nav />
       <Hero />
-      <LiquidTransition label="Act 02 — The Threat" />
+      <LiquidTransition />
       <Threat />
-      <LiquidTransition label="Act 03 — The Reveal" flip />
+      <LiquidTransition flip />
       <Solution />
-      <LiquidTransition label="Act 04 — Proof" />
+      <LiquidTransition />
       <Proof />
-      <LiquidTransition label="Act 05 — Begin" flip />
+      <LiquidTransition flip />
       <ConsultationForm />
       <Footer />
     </main>
