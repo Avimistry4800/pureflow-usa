@@ -65,7 +65,7 @@ describe("landing page — act-level regression", () => {
     expect(scope.getByRole("heading", { level: 2 })).toBeInTheDocument();
     // a real form means real inputs
     expect((section as HTMLElement).querySelectorAll("input, textarea, select").length).toBeGreaterThan(0);
-    expect(scope.getByRole("button")).toBeInTheDocument();
+    expect(scope.getByRole("button", { name: /request consultation/i })).toBeInTheDocument();
   });
 
   it("renders all five acts in document order", () => {
