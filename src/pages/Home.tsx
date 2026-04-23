@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import Preloader from "@/components/chrome/Preloader";
 import CustomCursor from "@/components/chrome/CustomCursor";
 import Hero from "@/components/hero/Hero";
+import Threat from "@/components/threat/Threat";
+import Solution from "@/components/solution/Solution";
+import Proof from "@/components/proof/Proof";
 import { useDocumentMeta } from "@/lib/useDocumentMeta";
 
 const sectorTeasers = [
