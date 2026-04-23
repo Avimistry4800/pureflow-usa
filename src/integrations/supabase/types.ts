@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      articles: {
+        Row: {
+          body_md: string
+          cover_url: string | null
+          created_at: string
+          excerpt: string
+          id: string
+          published_at: string
+          reading_minutes: number
+          slug: string
+          tag: Database["public"]["Enums"]["article_tag"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body_md: string
+          cover_url?: string | null
+          created_at?: string
+          excerpt: string
+          id?: string
+          published_at?: string
+          reading_minutes?: number
+          slug: string
+          tag?: Database["public"]["Enums"]["article_tag"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body_md?: string
+          cover_url?: string | null
+          created_at?: string
+          excerpt?: string
+          id?: string
+          published_at?: string
+          reading_minutes?: number
+          slug?: string
+          tag?: Database["public"]["Enums"]["article_tag"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           created_at: string
@@ -50,6 +92,27 @@ export type Database = {
         }
         Relationships: []
       }
+      newsletter_subscribers: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          source_page: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          source_page?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          source_page?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -58,6 +121,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      article_tag: "regulation" | "health" | "industry" | "guides"
       lead_sector: "home" | "medical" | "hospitality" | "office"
     }
     CompositeTypes: {
@@ -186,6 +250,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      article_tag: ["regulation", "health", "industry", "guides"],
       lead_sector: ["home", "medical", "hospitality", "office"],
     },
   },

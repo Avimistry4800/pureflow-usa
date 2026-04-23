@@ -1,99 +1,63 @@
 /**
- * Visual regression smoke tests for every act on the landing page.
- *
- * These don't compare pixels — they assert each act renders meaningful,
- * non-empty content into the DOM. This catches the "blank section" class
- * of regressions (e.g., a transition or canvas eating an entire act, a
- * bad ref crash, or a missing default export) before deployment.
- *
- * If you intentionally remove/rename a marker, update its assertion here.
+ * Smoke tests: each top-level route renders without throwing
+ * and produces meaningful content. Replaces the old single-page
+ * act-by-act regression now that the site is multi-page.
  */
-import { describe, it, expect } from "vitest";
-import { render, within } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
-import Index from "@/pages/Index";
+import { describe, it, expect, vi } from "vitest";
+import { render } from "@testing-library/react";
+import { MemoryRouter, Routes, Route } from "react-router-dom";
+import { Suspense, lazy } from "react";
 
-const renderPage = () =>
-  render(
-    <MemoryRouter>
-      <Index />
-    </MemoryRouter>,
-  );
+// Mock supabase client so Insights / form pages don't try to network.
+vi.mock("@/integrations/supabase/client", () => ({
+  supabase: {
+    from: () => ({
+      select: () => ({
+        order: () => Promise.resolve({ data: [], error: null }),
+        eq: () => ({ maybeSingle: () => Promise.resolve({ data: null, error: null }) }),
+      }),
+    }),
+    functions: { invoke: () => Promise.resolve({ data: null, error: null }) },
+  },
+}));
 
-const MIN_TEXT_CHARS = 40; // an act with less than this is effectively blank
+// Mock the WebGL hero canvas and preloader (jsdom can't run WebGL).
+vi.mock("@/components/hero/HeroCanvas", () => ({ default: () => null }));
+vi.mock("@/components/chrome/Preloader", () => ({ default: () => null }));
+vi.mock("@/components/chrome/CustomCursor", () => ({ default: () => null }));
 
-describe("landing page — act-level regression", () => {
-  it("Hero act renders the wordmark headline", () => {
-    const { container } = renderPage();
-    expect(container.textContent).toMatch(/Purity/i);
-    expect(container.textContent).toMatch(/by design/i);
-    expect(container.querySelector("h1")).toBeInTheDocument();
-  });
+const Home = lazy(() => import("@/pages/Home"));
+const Technology = lazy(() => import("@/pages/Technology"));
+const Process = lazy(() => import("@/pages/Process"));
+const About = lazy(() => import("@/pages/About"));
+const Contact = lazy(() => import("@/pages/Contact"));
+const Insights = lazy(() => import("@/pages/Insights"));
+const SectorMedical = lazy(() => import("@/pages/sectors/Medical"));
 
-  it("Threat act renders with the invisible-threat label and substantive content", () => {
-    renderPage();
-    const section = document.querySelector('section[aria-label="The invisible threat"]');
-    expect(section).not.toBeNull();
-    const text = (section?.textContent ?? "").trim();
-    expect(text.length).toBeGreaterThan(MIN_TEXT_CHARS);
-    expect(within(section as HTMLElement).getByRole("heading", { level: 2 })).toBeInTheDocument();
-  });
+const routes: { path: string; el: React.LazyExoticComponent<React.ComponentType>; expect: RegExp }[] = [
+  { path: "/", el: Home, expect: /Purity/i },
+  { path: "/technology", el: Technology, expect: /Eight stages/i },
+  { path: "/process", el: Process, expect: /Four weeks/i },
+  { path: "/about", el: About, expect: /British workshop/i },
+  { path: "/contact", el: Contact, expect: /senior engineer/i },
+  { path: "/insights", el: Insights, expect: /your water/i },
+  { path: "/sectors/medical", el: SectorMedical, expect: /Clinical-grade/i },
+];
 
-  it("Solution act renders with the system label and substantive content", () => {
-    renderPage();
-    const section = document.querySelector('section[aria-label="The system"]');
-    expect(section).not.toBeNull();
-    const text = (section?.textContent ?? "").trim();
-    expect(text.length).toBeGreaterThan(MIN_TEXT_CHARS);
-    expect(within(section as HTMLElement).getByRole("heading", { level: 2 })).toBeInTheDocument();
-  });
-
-  it("Proof act renders at #proof with substantive content", () => {
-    renderPage();
-    const section = document.querySelector("#proof");
-    expect(section).not.toBeNull();
-    const text = (section?.textContent ?? "").trim();
-    expect(text.length).toBeGreaterThan(MIN_TEXT_CHARS);
-    expect(within(section as HTMLElement).getByRole("heading", { level: 2 })).toBeInTheDocument();
-  });
-
-  it("Consultation form act renders at #consult with form fields", () => {
-    renderPage();
-    const section = document.querySelector("#consult");
-    expect(section).not.toBeNull();
-    const scope = within(section as HTMLElement);
-    expect(scope.getByRole("heading", { level: 2 })).toBeInTheDocument();
-    // a real form means real inputs
-    expect((section as HTMLElement).querySelectorAll("input, textarea, select").length).toBeGreaterThan(0);
-    expect(scope.getByRole("button", { name: /request consultation/i })).toBeInTheDocument();
-  });
-
-  it("renders all five acts in document order", () => {
-    renderPage();
-    const acts = [
-      document.querySelector("h1"), // hero
-      document.querySelector('section[aria-label="The invisible threat"]'),
-      document.querySelector('section[aria-label="The system"]'),
-      document.querySelector("#proof"),
-      document.querySelector("#consult"),
-    ];
-    acts.forEach((node, i) => {
-      expect(node, `act #${i + 1} is missing from the page`).not.toBeNull();
+describe("multipage routes — smoke", () => {
+  routes.forEach(({ path, el: El, expect: rx }) => {
+    it(`${path} renders meaningful content`, async () => {
+      const { findByText } = render(
+        <MemoryRouter initialEntries={[path]}>
+          <Suspense fallback={<div>loading</div>}>
+            <Routes>
+              <Route path={path} element={<El />} />
+            </Routes>
+          </Suspense>
+        </MemoryRouter>,
+      );
+      const node = await findByText(rx);
+      expect(node).toBeInTheDocument();
     });
-    // verify document order
-    for (let i = 1; i < acts.length; i++) {
-      const prev = acts[i - 1] as Node;
-      const curr = acts[i] as Node;
-      // bitmask 4 == DOCUMENT_POSITION_FOLLOWING
-      expect(prev.compareDocumentPosition(curr) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    }
-  });
-
-  it("LiquidTransition wipes do not swallow surrounding act content", () => {
-    // Each transition is pointer-events:none chrome; sections must remain in the
-    // accessibility tree directly after the transitions render.
-    renderPage();
-    const sections = document.querySelectorAll("section, #proof, #consult");
-    expect(sections.length).toBeGreaterThanOrEqual(5);
   });
 });
