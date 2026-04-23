@@ -1,11 +1,223 @@
 import { useEffect, useRef, useState } from "react";
 
 const contaminants = [
-  { code: "PFA-014", name: "PFAS / Forever Chemicals", note: "Detected in 99% of US water supplies. Linked to immune dysfunction." },
-  { code: "MCP-021", name: "Microplastics", note: "Average American ingests 74,000 particles per year." },
-  { code: "CL2-008", name: "Chlorine & Disinfection By-products", note: "Trihalomethanes, haloacetic acids — invisible, persistent." },
-  { code: "PB-082", name: "Lead & Heavy Metals", note: "Aging US infrastructure leaches at the tap. No safe level exists." },
+  { code: "PFA-014", name: "PFAS / Forever Chemicals", note: "Detected in 99% of US water supplies. Linked to immune dysfunction.", peakPpm: 70, unit: "ppt" },
+  { code: "MCP-021", name: "Microplastics", note: "Average American ingests 74,000 particles per year.", peakPpm: 240, unit: "p/L" },
+  { code: "CL2-008", name: "Chlorine & Disinfection By-products", note: "Trihalomethanes, haloacetic acids — invisible, persistent.", peakPpm: 4.0, unit: "mg/L" },
+  { code: "PB-082", name: "Lead & Heavy Metals", note: "Aging US infrastructure leaches at the tap. No safe level exists.", peakPpm: 15, unit: "µg/L" },
 ];
+
+// Deterministic pseudo-random for stable layouts
+const rand = (seed: number) => {
+  const x = Math.sin(seed * 9999) * 43758.5453;
+  return x - Math.floor(x);
+};
+
+// PFAS — hexagonal molecular rings with bond lines
+const PfasField = ({ progress, visible }: { progress: number; visible: boolean }) => {
+  const nodes = Array.from({ length: 14 }).map((_, i) => ({
+    x: 8 + rand(i + 1) * 84,
+    y: 12 + rand(i + 11) * 76,
+    size: 22 + rand(i + 21) * 26,
+    delay: rand(i + 31),
+  }));
+  return (
+    <div
+      className="pointer-events-none absolute inset-0 transition-opacity duration-700"
+      style={{ opacity: visible ? 1 : 0 }}
+      aria-hidden
+    >
+      <svg className="absolute inset-0 h-full w-full" preserveAspectRatio="none" viewBox="0 0 100 100">
+        {nodes.slice(0, 8).map((n, i) => {
+          const m = nodes[(i + 3) % nodes.length];
+          return (
+            <line
+              key={i}
+              x1={n.x} y1={n.y} x2={m.x} y2={m.y}
+              stroke="hsl(var(--primary))"
+              strokeWidth="0.08"
+              strokeOpacity={0.15 + progress * 0.35}
+            />
+          );
+        })}
+      </svg>
+      {nodes.map((n, i) => (
+        <span
+          key={i}
+          className="absolute motion-safe:animate-[pfasFloat_9s_ease-in-out_infinite]"
+          style={{
+            left: `${n.x}%`,
+            top: `${n.y}%`,
+            width: n.size,
+            height: n.size,
+            marginLeft: -n.size / 2,
+            marginTop: -n.size / 2,
+            clipPath: "polygon(25% 6%, 75% 6%, 100% 50%, 75% 94%, 25% 94%, 0% 50%)",
+            background: "transparent",
+            border: "1px solid hsl(var(--primary) / 0.55)",
+            boxShadow: `inset 0 0 ${6 + progress * 14}px hsl(var(--primary) / ${0.15 + progress * 0.35})`,
+            opacity: 0.4 + progress * 0.5,
+            animationDelay: `${n.delay * 4}s`,
+            transform: `translateY(${-progress * 30}px) rotate(${progress * 60 + i * 8}deg)`,
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
+// Microplastics — irregular tumbling shards
+const MicroplasticsField = ({ progress, visible }: { progress: number; visible: boolean }) => {
+  const shards = Array.from({ length: 40 }).map((_, i) => ({
+    x: rand(i + 101) * 100,
+    y: rand(i + 201) * 100,
+    size: 3 + rand(i + 301) * 11,
+    layer: Math.floor(rand(i + 401) * 3),
+    rot: rand(i + 501) * 360,
+    shape: Math.floor(rand(i + 601) * 4),
+  }));
+  const clips = [
+    "polygon(20% 0%, 100% 30%, 80% 100%, 0% 70%)",
+    "polygon(0% 20%, 60% 0%, 100% 60%, 40% 100%)",
+    "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)",
+    "polygon(10% 10%, 90% 0%, 100% 80%, 30% 100%, 0% 50%)",
+  ];
+  return (
+    <div
+      className="pointer-events-none absolute inset-0 transition-opacity duration-700"
+      style={{ opacity: visible ? 1 : 0 }}
+      aria-hidden
+    >
+      {shards.map((s, i) => {
+        const speed = (s.layer + 1) * 18;
+        return (
+          <span
+            key={i}
+            className="absolute"
+            style={{
+              left: `${s.x}%`,
+              top: `${s.y}%`,
+              width: s.size,
+              height: s.size,
+              clipPath: clips[s.shape],
+              background: `hsl(var(--accent) / ${0.35 + s.layer * 0.2})`,
+              opacity: 0.3 + progress * 0.55,
+              transform: `translate(${Math.sin(progress * Math.PI * 2 + i) * speed}px, ${-progress * speed * 1.5}px) rotate(${s.rot + progress * 220}deg)`,
+              filter: `blur(${(2 - s.layer) * 0.4}px)`,
+              transition: "opacity 0.6s var(--ease-fluid)",
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+};
+
+// Chlorine — rising bubble column
+const ChlorineField = ({ progress, visible }: { progress: number; visible: boolean }) => {
+  const bubbles = Array.from({ length: 24 }).map((_, i) => ({
+    x: rand(i + 701) * 100,
+    size: 6 + rand(i + 801) * 18,
+    delay: rand(i + 901) * 6,
+    duration: 5 + rand(i + 1001) * 5,
+  }));
+  return (
+    <div
+      className="pointer-events-none absolute inset-0 overflow-hidden transition-opacity duration-700"
+      style={{ opacity: visible ? 1 : 0 }}
+      aria-hidden
+    >
+      {/* waterline shimmer */}
+      <div
+        className="absolute inset-x-0 h-px"
+        style={{
+          top: `${50 - progress * 10}%`,
+          background: "linear-gradient(90deg, transparent, hsl(var(--primary-glow) / 0.6), transparent)",
+          opacity: 0.4 + progress * 0.4,
+        }}
+      />
+      {bubbles.map((b, i) => (
+        <span
+          key={i}
+          className="absolute rounded-full motion-safe:animate-[bubbleRise_var(--dur)_linear_infinite]"
+          style={{
+            left: `${b.x}%`,
+            bottom: 0,
+            width: b.size,
+            height: b.size,
+            background: "radial-gradient(circle at 35% 30%, hsl(var(--primary-glow) / 0.9), hsl(var(--primary-glow) / 0.15) 60%, transparent 70%)",
+            border: "1px solid hsl(var(--primary-glow) / 0.4)",
+            opacity: 0.4 + progress * 0.5,
+            ["--dur" as string]: `${b.duration}s`,
+            animationDelay: `${b.delay}s`,
+          } as React.CSSProperties}
+        />
+      ))}
+    </div>
+  );
+};
+
+// Lead — heavy crystals + dripping pipe
+const LeadField = ({ progress, visible }: { progress: number; visible: boolean }) => {
+  const crystals = Array.from({ length: 18 }).map((_, i) => ({
+    x: rand(i + 1101) * 100,
+    y: rand(i + 1201) * 100,
+    size: 8 + rand(i + 1301) * 18,
+    rot: rand(i + 1401) * 90,
+  }));
+  return (
+    <div
+      className="pointer-events-none absolute inset-0 transition-opacity duration-700"
+      style={{ opacity: visible ? 1 : 0 }}
+      aria-hidden
+    >
+      {crystals.map((c, i) => (
+        <span
+          key={i}
+          className="absolute"
+          style={{
+            left: `${c.x}%`,
+            top: `${c.y}%`,
+            width: c.size,
+            height: c.size * 1.4,
+            clipPath: "polygon(50% 0%, 100% 35%, 80% 100%, 20% 100%, 0% 35%)",
+            background: "linear-gradient(160deg, hsl(var(--chrome) / 0.5), hsl(var(--chrome) / 0.1))",
+            border: "1px solid hsl(var(--chrome) / 0.35)",
+            opacity: 0.35 + progress * 0.45,
+            transform: `translateY(${progress * 40}px) rotate(${c.rot}deg)`,
+            filter: "saturate(0.4)",
+          }}
+        />
+      ))}
+      {/* Pipe cross-section + drip */}
+      <div className="absolute right-[14%] top-0 h-1/2 w-2 bg-gradient-to-b from-transparent via-chrome/30 to-chrome/50" />
+      <span
+        className="absolute right-[14%] h-2 w-2 rounded-full bg-chrome/70 motion-safe:animate-[leadDrip_2.4s_ease-in_infinite]"
+        style={{ top: "48%", marginRight: "-2px", boxShadow: "0 0 10px hsl(var(--chrome) / 0.4)" }}
+        aria-hidden
+      />
+    </div>
+  );
+};
+
+const ContaminantField = ({ active, progress }: { active: number; progress: number }) => (
+  <>
+    <PfasField progress={progress} visible={active === 0} />
+    <MicroplasticsField progress={progress} visible={active === 1} />
+    <ChlorineField progress={progress} visible={active === 2} />
+    <LeadField progress={progress} visible={active === 3} />
+  </>
+);
+
+const DiveGlyph = ({ active }: { active: number }) => {
+  const common = "block h-3 w-3";
+  if (active === 0)
+    return <span className={common} style={{ clipPath: "polygon(25% 6%, 75% 6%, 100% 50%, 75% 94%, 25% 94%, 0% 50%)", background: "hsl(var(--primary))" }} />;
+  if (active === 1)
+    return <span className={common} style={{ clipPath: "polygon(20% 0%, 100% 30%, 80% 100%, 0% 70%)", background: "hsl(var(--accent))" }} />;
+  if (active === 2) return <span className={`${common} rounded-full`} style={{ background: "hsl(var(--primary-glow))" }} />;
+  return <span className={common} style={{ clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)", background: "hsl(var(--chrome))" }} />;
+};
 
 const stats = [
   { v: "87%", l: "Americans concerned about tap water" },
@@ -83,6 +295,9 @@ const Threat = () => {
           })}
         </div>
 
+        {/* Contaminant-specific animated layer */}
+        <ContaminantField active={active} progress={progress} />
+
         {/* Header */}
         <div className="relative z-10 px-6 pt-28 sm:px-12">
           <div className="container mx-auto flex flex-col gap-3">
@@ -133,6 +348,23 @@ const Threat = () => {
                     />
                   ))}
                 </div>
+
+                {/* Concentration meter */}
+                <div className="mt-6 flex items-center gap-4">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
+                    Concentration
+                  </span>
+                  <div className="relative h-1 flex-1 overflow-hidden rounded-full bg-border/40">
+                    <div
+                      className="absolute inset-y-0 left-0 bg-gradient-liquid transition-[width] duration-300"
+                      style={{ width: `${20 + progress * 80}%` }}
+                    />
+                  </div>
+                  <span className="font-mono text-[11px] tabular-nums text-chrome">
+                    {(contaminants[active].peakPpm * (0.2 + progress * 0.8)).toFixed(contaminants[active].peakPpm < 10 ? 2 : 0)}
+                    <span className="ml-1 text-muted-foreground">{contaminants[active].unit}</span>
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -167,6 +399,7 @@ const Threat = () => {
               style={{ height: `${progress * 100}%` }}
             />
           </div>
+          <DiveGlyph active={active} />
         </div>
       </div>
     </section>
