@@ -349,22 +349,78 @@ const Threat = () => {
                   ))}
                 </div>
 
-                {/* Concentration meter */}
-                <div className="mt-6 flex items-center gap-4">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
-                    Concentration
-                  </span>
-                  <div className="relative h-1 flex-1 overflow-hidden rounded-full bg-border/40">
-                    <div
-                      className="absolute inset-y-0 left-0 bg-gradient-liquid transition-[width] duration-300"
-                      style={{ width: `${20 + progress * 80}%` }}
-                    />
-                  </div>
-                  <span className="font-mono text-[11px] tabular-nums text-chrome">
-                    {(contaminants[active].peakPpm * (0.2 + progress * 0.8)).toFixed(contaminants[active].peakPpm < 10 ? 2 : 0)}
-                    <span className="ml-1 text-muted-foreground">{contaminants[active].unit}</span>
-                  </span>
-                </div>
+                {/* Concentration meter — scroll-synced */}
+                {(() => {
+                  const fillPct = 4 + progress * 96;
+                  const peak = contaminants[active].peakPpm;
+                  const value = peak * (0.04 + progress * 0.96);
+                  const decimals = peak < 10 ? 2 : peak < 100 ? 1 : 0;
+                  const display = value.toLocaleString(undefined, {
+                    minimumFractionDigits: decimals,
+                    maximumFractionDigits: decimals,
+                  });
+                  return (
+                    <div className="mt-7 border-t border-border/60 pt-5">
+                      <div className="flex items-baseline justify-between">
+                        <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
+                          Concentration · PPM
+                        </span>
+                        <div className="flex items-baseline gap-2">
+                          <span className="font-display text-2xl font-light tabular-nums text-chrome sm:text-3xl">
+                            {display}
+                          </span>
+                          <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-primary">
+                            {contaminants[active].unit}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Track */}
+                      <div className="relative mt-4 h-2 w-full overflow-hidden rounded-full bg-border/40">
+                        {/* tick marks */}
+                        <div className="pointer-events-none absolute inset-0 flex justify-between px-[2px]">
+                          {Array.from({ length: 11 }).map((_, i) => (
+                            <span
+                              key={i}
+                              className="block w-px"
+                              style={{
+                                background: "hsl(var(--border))",
+                                opacity: i % 5 === 0 ? 0.9 : 0.4,
+                              }}
+                            />
+                          ))}
+                        </div>
+                        {/* fill */}
+                        <div
+                          className="absolute inset-y-0 left-0 rounded-full transition-[width] duration-200 ease-out"
+                          style={{
+                            width: `${fillPct}%`,
+                            background: "var(--gradient-liquid)",
+                            boxShadow: "0 0 12px hsl(var(--primary) / 0.55)",
+                          }}
+                        />
+                        {/* leading marker */}
+                        <span
+                          className="absolute top-1/2 h-3 w-[2px] -translate-x-1/2 -translate-y-1/2 transition-[left] duration-200 ease-out"
+                          style={{
+                            left: `${fillPct}%`,
+                            background: "hsl(var(--chrome))",
+                            boxShadow: "0 0 10px hsl(var(--primary))",
+                          }}
+                          aria-hidden
+                        />
+                      </div>
+
+                      {/* Scale labels */}
+                      <div className="mt-2 flex justify-between font-mono text-[9px] uppercase tracking-[0.24em] text-muted-foreground">
+                        <span>0</span>
+                        <span>Trace</span>
+                        <span>Action level</span>
+                        <span className="text-primary">Peak {peak}{contaminants[active].unit}</span>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
             </div>
 
