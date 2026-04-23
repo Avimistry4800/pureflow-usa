@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useThreatAudio } from "@/lib/useThreatAudio";
 
 const contaminants = [
   { code: "PFA-014", name: "PFAS / Forever Chemicals", note: "Detected in 99% of US water supplies. Linked to immune dysfunction.", peakPpm: 70, unit: "ppt" },
@@ -229,6 +230,7 @@ const Threat = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [active, setActive] = useState(0);
   const [progress, setProgress] = useState(0);
+  const { muted, toggleMuted, update: updateAudio } = useThreatAudio();
 
   useEffect(() => {
     const onScroll = () => {
@@ -241,11 +243,13 @@ const Threat = () => {
       setProgress(p);
       const idx = Math.min(contaminants.length - 1, Math.floor(p * contaminants.length));
       setActive(idx);
+      const inView = rect.top < window.innerHeight && rect.bottom > 0;
+      updateAudio(p, idx, inView);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [updateAudio]);
 
   return (
     <section
