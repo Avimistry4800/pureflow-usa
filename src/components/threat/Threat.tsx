@@ -399,6 +399,7 @@ const Threat = () => {
               style={{ height: `${progress * 100}%` }}
             />
           </div>
+          <DiveGlyph active={active} />
         </div>
       </div>
     </section>
