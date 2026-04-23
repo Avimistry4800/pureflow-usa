@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useThreatAudio } from "@/lib/useThreatAudio";
 
 const contaminants = [
   { code: "PFA-014", name: "PFAS / Forever Chemicals", note: "Detected in 99% of US water supplies. Linked to immune dysfunction.", peakPpm: 70, unit: "ppt" },
@@ -229,6 +230,7 @@ const Threat = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [active, setActive] = useState(0);
   const [progress, setProgress] = useState(0);
+  const { muted, toggleMuted, update: updateAudio } = useThreatAudio();
 
   useEffect(() => {
     const onScroll = () => {
@@ -241,11 +243,13 @@ const Threat = () => {
       setProgress(p);
       const idx = Math.min(contaminants.length - 1, Math.floor(p * contaminants.length));
       setActive(idx);
+      const inView = rect.top < window.innerHeight && rect.bottom > 0;
+      updateAudio(p, idx, inView);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [updateAudio]);
 
   return (
     <section
@@ -361,10 +365,26 @@ const Threat = () => {
                   });
                   return (
                     <div className="mt-7 border-t border-border/60 pt-5">
-                      <div className="flex items-baseline justify-between">
-                        <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
-                          Concentration · PPM
-                        </span>
+                      <div className="flex items-baseline justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
+                            Concentration · PPM
+                          </span>
+                          <button
+                            type="button"
+                            onClick={toggleMuted}
+                            aria-pressed={!muted}
+                            aria-label={muted ? "Unmute concentration meter sound" : "Mute concentration meter sound"}
+                            className="group inline-flex h-6 items-center gap-1.5 rounded-full border border-border/70 bg-background/40 px-2 font-mono text-[9px] uppercase tracking-[0.22em] text-muted-foreground transition-colors hover:border-primary/60 hover:text-chrome"
+                          >
+                            <span
+                              className="block h-1.5 w-1.5 rounded-full transition-colors"
+                              style={{ background: muted ? "hsl(var(--muted-foreground))" : "hsl(var(--primary))", boxShadow: muted ? "none" : "0 0 8px hsl(var(--primary))" }}
+                              aria-hidden
+                            />
+                            {muted ? "Sound off" : "Sound on"}
+                          </button>
+                        </div>
                         <div className="flex items-baseline gap-2">
                           <span className="font-display text-2xl font-light tabular-nums text-chrome sm:text-3xl">
                             {display}
