@@ -348,6 +348,23 @@ const Threat = () => {
                     />
                   ))}
                 </div>
+
+                {/* Concentration meter */}
+                <div className="mt-6 flex items-center gap-4">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
+                    Concentration
+                  </span>
+                  <div className="relative h-1 flex-1 overflow-hidden rounded-full bg-border/40">
+                    <div
+                      className="absolute inset-y-0 left-0 bg-gradient-liquid transition-[width] duration-300"
+                      style={{ width: `${20 + progress * 80}%` }}
+                    />
+                  </div>
+                  <span className="font-mono text-[11px] tabular-nums text-chrome">
+                    {(contaminants[active].peakPpm * (0.2 + progress * 0.8)).toFixed(contaminants[active].peakPpm < 10 ? 2 : 0)}
+                    <span className="ml-1 text-muted-foreground">{contaminants[active].unit}</span>
+                  </span>
+                </div>
               </div>
             </div>
 
