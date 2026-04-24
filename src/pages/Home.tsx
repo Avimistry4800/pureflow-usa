@@ -4,7 +4,10 @@ import CustomCursor from "@/components/chrome/CustomCursor";
 import Hero from "@/components/hero/Hero";
 import Threat from "@/components/threat/Threat";
 import Solution from "@/components/solution/Solution";
+import Comparison from "@/components/comparison/Comparison";
+import Process from "@/components/process/Process";
 import Proof from "@/components/proof/Proof";
+import FinalCTA from "@/components/cta/FinalCTA";
 import { useDocumentMeta } from "@/lib/useDocumentMeta";
 
 const Home = () => {
@@ -21,7 +24,10 @@ const Home = () => {
       <Hero />
       <Threat />
       <Solution />
+      <Comparison />
+      <Process />
       <Proof />
+      <FinalCTA />
     </>
   );
 };
