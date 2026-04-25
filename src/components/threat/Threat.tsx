@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useThreatAudio } from "@/lib/useThreatAudio";
+import Trend24h from "./Trend24h";
 
 const contaminants = [
   { code: "PFA-014", name: "PFAS / Forever Chemicals", note: "Detected in 99% of US water supplies. Linked to immune dysfunction.", peakPpm: 70, unit: "ppt" },
