@@ -18,12 +18,12 @@ const Proof = () => (
       {/* Heritage strip */}
       <div className="mb-20 grid grid-cols-1 gap-10 md:grid-cols-12">
         <div className="md:col-span-5">
-          <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-primary">
-            Act 05 — Heritage
+          <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-primary tabular-nums">
+            1992 — Present
           </span>
-          <h2 className="mt-4 font-display text-4xl font-light leading-[1.05] text-chrome sm:text-6xl">
+          <h2 className="mt-4 font-display text-4xl font-light leading-[1.02] text-chrome sm:text-6xl">
             From a London<br />
-            workshop to <span className="italic text-liquid">your tap.</span>
+            workshop to your tap.
           </h2>
         </div>
         <div className="md:col-span-6 md:col-start-7">
