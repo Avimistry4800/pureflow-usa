@@ -1,10 +1,12 @@
+import { Link } from "react-router-dom";
+
 const partners = ["QUOOKER", "BLUE WATER", "MAYO CLINIC", "FOUR SEASONS", "RH", "GOLDMAN"];
 
-const sectors = [
-  { id: "01", name: "Residence", desc: "Bespoke under-counter and whole-home systems for elite homes from Aspen to the Hamptons." },
-  { id: "02", name: "Medical", desc: "Clinical-grade RO+UV for dental, autoclave and dialysis. 99.9% pyrogen-free." },
-  { id: "03", name: "Hospitality", desc: "Still & sparkling on-tap. Eliminate 7.7B single-use bottles annually." },
-  { id: "04", name: "Office", desc: "Sustainability-first stations for corporate hubs. Connected, monitored, branded." },
+const sectorLinks = [
+  { label: "residences in Aspen", to: "/sectors/home" },
+  { label: "dental clinics in Boston", to: "/sectors/medical" },
+  { label: "hotels in Miami", to: "/sectors/hospitality" },
+  { label: "offices in Manhattan", to: "/sectors/office" },
 ];
 
 const Proof = () => (
