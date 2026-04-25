@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useThreatAudio } from "@/lib/useThreatAudio";
+import Trend24h from "./Trend24h";
 
 const contaminants = [
   { code: "PFA-014", name: "PFAS / Forever Chemicals", note: "Detected in 99% of US water supplies. Linked to immune dysfunction.", peakPpm: 70, unit: "ppt" },
@@ -304,17 +305,32 @@ const Threat = () => {
 
         {/* Header */}
         <div className="relative z-10 px-6 pt-28 sm:px-12">
-          <div className="container mx-auto flex flex-col gap-3">
-            <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-primary tabular-nums">
-              <span className="inline-block h-1.5 w-1.5 translate-y-[-2px] rounded-full bg-primary mr-3 animate-pulse-dot" />
-              {contaminants[active].code} · live · {(contaminants[active].peakPpm * (0.4 + progress * 0.6)).toFixed(contaminants[active].peakPpm < 10 ? 2 : 0)} {contaminants[active].unit} — last 24h
-            </span>
-            <h2 className="max-w-3xl font-display text-4xl font-light leading-[1.05] text-chrome sm:text-6xl md:text-7xl">
-              You can't see it.<br />
-              <span className="italic text-liquid">It's still there.</span>
-            </h2>
+          <div className="container mx-auto grid grid-cols-1 gap-6 md:grid-cols-12 md:items-end">
+            <div className="md:col-span-7 flex flex-col gap-3">
+              <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-primary tabular-nums">
+                <span className="inline-block h-1.5 w-1.5 translate-y-[-2px] rounded-full bg-primary mr-3 animate-pulse-dot" />
+                {contaminants[active].code} · live · {(contaminants[active].peakPpm * (0.4 + progress * 0.6)).toFixed(contaminants[active].peakPpm < 10 ? 2 : 0)} {contaminants[active].unit}
+              </span>
+              <h2 className="max-w-3xl font-display text-4xl font-light leading-[1.05] text-chrome sm:text-6xl md:text-7xl">
+                You can't see it.<br />
+                <span className="italic text-liquid">It's still there.</span>
+              </h2>
+            </div>
+            {/* Interactive 24h trend mini-chart for the active contaminant */}
+            <div className="md:col-span-5">
+              <div className="surface-glass rounded-md p-4">
+                <Trend24h
+                  seed={contaminants[active].code}
+                  peak={contaminants[active].peakPpm}
+                  unit={contaminants[active].unit}
+                  code={contaminants[active].code}
+                  progress={progress}
+                />
+              </div>
+            </div>
           </div>
         </div>
+
 
         {/* Body grid */}
         <div className="relative z-10 mt-auto px-6 pb-20 sm:px-12">
