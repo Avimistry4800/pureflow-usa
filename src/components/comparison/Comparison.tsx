@@ -78,8 +78,8 @@ const Comparison = () => (
         </div>
       </div>
 
-      {/* Desktop matrix */}
-      <div className="surface-glass hidden overflow-hidden rounded-lg md:block">
+      {/* Desktop matrix — flat datasheet */}
+      <div className="hidden overflow-hidden rounded-sm border border-border/60 bg-background md:block">
         <div className="grid grid-cols-5 border-b border-border/60">
           <div className="p-5" />
           {columns.map((c) => (
