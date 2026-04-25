@@ -46,32 +46,40 @@ const Cell = ({ v, featured }: { v: string | boolean; featured?: boolean }) => {
 };
 
 const Comparison = () => (
-  <section id="comparison" className="relative bg-background py-32 sm:py-40" aria-label="Comparison">
-    <div className="absolute inset-0 grid-noise opacity-30" />
-    <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
-
+  <section
+    id="comparison"
+    className="relative py-32 sm:py-40"
+    style={{ background: "hsl(var(--surface-elevated))" }}
+    aria-label="Comparison"
+  >
     <div className="container relative mx-auto px-6">
-      <div className="mb-16 grid grid-cols-1 gap-10 md:grid-cols-12">
-        <div className="md:col-span-5">
-          <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-primary">
-            Act 03.5 — The Difference
+      <div className="mb-16 grid grid-cols-1 gap-10 md:grid-cols-12 md:items-end">
+        <div className="md:col-span-7">
+          <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
+            Four ways to make water drinkable. One that lasts.
           </span>
-          <h2 className="mt-4 font-display text-4xl font-light leading-[1.05] text-chrome sm:text-6xl">
+          <h2 className="mt-5 font-display text-4xl font-light leading-[1.02] text-chrome sm:text-6xl">
             Not all clean<br />
-            <span className="italic text-liquid">is</span> clean.
+            is clean.
           </h2>
         </div>
-        <div className="md:col-span-6 md:col-start-7">
+        <div className="md:col-span-5">
           <p className="text-base text-muted-foreground sm:text-lg">
-            The American kitchen has options. Most of them solve one problem
-            while creating two more. Here's how a permanent, calibrated system
-            compares to what's already on your counter.
+            A pitcher buys you a week. A bottled service buys you guilt.
+            This is what permanent looks like.
+          </p>
+          <p className="mt-6 font-mono text-xs uppercase tracking-[0.24em] text-chrome tabular-nums">
+            <span className="text-muted-foreground">10-yr cost</span>
+            <span className="mx-3 text-muted-foreground/40">/</span>
+            <span className="line-through decoration-muted-foreground/60">$11,000</span>
+            <span className="mx-2 text-muted-foreground">→</span>
+            <span className="text-primary">$4,200</span>
           </p>
         </div>
       </div>
 
-      {/* Desktop matrix */}
-      <div className="surface-glass hidden overflow-hidden rounded-lg md:block">
+      {/* Desktop matrix — flat datasheet */}
+      <div className="hidden overflow-hidden rounded-sm border border-border/60 bg-background md:block">
         <div className="grid grid-cols-5 border-b border-border/60">
           <div className="p-5" />
           {columns.map((c) => (

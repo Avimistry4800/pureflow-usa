@@ -152,10 +152,10 @@ const Solution = () => {
             {/* Stage label overlay */}
             <div className="pointer-events-none absolute left-6 top-28 sm:left-10">
               <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-primary">
-                Act 03 — Reveal
+                WPL-LIQ-001 / Cross-section
               </span>
               <h2 className="mt-3 max-w-md font-display text-4xl font-light leading-[1.05] text-chrome sm:text-5xl">
-                Engineered to be <span className="italic text-liquid">invisible.</span>
+                Engineered to be invisible.
               </h2>
             </div>
 

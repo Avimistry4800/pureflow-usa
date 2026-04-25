@@ -1,10 +1,12 @@
+import { Link } from "react-router-dom";
+
 const partners = ["QUOOKER", "BLUE WATER", "MAYO CLINIC", "FOUR SEASONS", "RH", "GOLDMAN"];
 
-const sectors = [
-  { id: "01", name: "Residence", desc: "Bespoke under-counter and whole-home systems for elite homes from Aspen to the Hamptons." },
-  { id: "02", name: "Medical", desc: "Clinical-grade RO+UV for dental, autoclave and dialysis. 99.9% pyrogen-free." },
-  { id: "03", name: "Hospitality", desc: "Still & sparkling on-tap. Eliminate 7.7B single-use bottles annually." },
-  { id: "04", name: "Office", desc: "Sustainability-first stations for corporate hubs. Connected, monitored, branded." },
+const sectorLinks = [
+  { label: "residences in Aspen", to: "/sectors/home" },
+  { label: "dental clinics in Boston", to: "/sectors/medical" },
+  { label: "hotels in Miami", to: "/sectors/hospitality" },
+  { label: "offices in Manhattan", to: "/sectors/office" },
 ];
 
 const Proof = () => (
@@ -16,12 +18,12 @@ const Proof = () => (
       {/* Heritage strip */}
       <div className="mb-20 grid grid-cols-1 gap-10 md:grid-cols-12">
         <div className="md:col-span-5">
-          <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-primary">
-            Act 05 — Heritage
+          <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-primary tabular-nums">
+            1992 — Present
           </span>
-          <h2 className="mt-4 font-display text-4xl font-light leading-[1.05] text-chrome sm:text-6xl">
+          <h2 className="mt-4 font-display text-4xl font-light leading-[1.02] text-chrome sm:text-6xl">
             From a London<br />
-            workshop to <span className="italic text-liquid">your tap.</span>
+            workshop to your tap.
           </h2>
         </div>
         <div className="md:col-span-6 md:col-start-7">
@@ -67,30 +69,34 @@ const Proof = () => (
         ))}
       </div>
 
-      {/* Sectors */}
-      <div className="mb-20 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {sectors.map((s) => (
-          <div key={s.id} className="surface-glass group relative overflow-hidden rounded-lg p-6 transition-all hover:border-primary/60">
-            <div className="flex items-center justify-between">
-              <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-primary">{s.id}</span>
-              <span className="h-1 w-1 rounded-full bg-primary opacity-50 group-hover:opacity-100" />
-            </div>
-            <h3 className="mt-6 font-display text-xl font-light text-chrome">{s.name}</h3>
-            <p className="mt-3 text-sm text-muted-foreground">{s.desc}</p>
-            <div className="mt-6 h-px w-full bg-gradient-to-r from-primary/0 via-primary/40 to-primary/0 opacity-0 transition-opacity group-hover:opacity-100" />
-          </div>
+      {/* Where it lives — a sentence, not a card grid */}
+      <p className="mx-auto mb-20 max-w-3xl text-center font-display text-xl font-light leading-relaxed text-muted-foreground sm:text-2xl">
+        Today it serves{" "}
+        {sectorLinks.map((s, i) => (
+          <span key={s.to}>
+            <Link
+              to={s.to}
+              className="text-chrome underline decoration-primary/30 decoration-1 underline-offset-[6px] transition-colors hover:decoration-primary"
+            >
+              {s.label}
+            </Link>
+            {i < sectorLinks.length - 2 ? ", " : i === sectorLinks.length - 2 ? ", and " : "."}
+          </span>
         ))}
-      </div>
+      </p>
 
       {/* Testimonial */}
       <figure className="mx-auto max-w-3xl text-center">
         <blockquote className="font-display text-2xl font-light leading-snug text-chrome sm:text-4xl">
-          "It's not a filter. It's <span className="italic text-liquid">infrastructure</span>—the
-          kind you stop noticing because it never fails."
+          "It's not a filter. It's infrastructure — the kind you stop
+          noticing because it never fails."
         </blockquote>
         <figcaption className="mt-6 font-mono text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
           Dr. M. Halsten · Director, Mayfair Dental Group
         </figcaption>
+        <div className="mt-3 font-mono text-[10px] tracking-[0.18em] text-muted-foreground/60">
+          Photographed at the Sheffield workshop, March 2024.
+        </div>
       </figure>
 
       {/* Partner ticker */}

@@ -10,9 +10,7 @@ const FinalCTA = () => {
       className="relative overflow-hidden bg-background py-32 sm:py-48"
       aria-label="Start your water test"
     >
-      <div className="absolute inset-0 grid-noise opacity-40" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_120%,hsl(var(--primary)/0.28),transparent_60%)]" />
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_120%,hsl(var(--primary)/0.22),transparent_55%)]" />
 
       {/* Pulsing horizontal liquid line */}
       <div className="pointer-events-none absolute left-0 right-0 top-1/2 h-px -translate-y-1/2 overflow-hidden">
@@ -34,15 +32,11 @@ const FinalCTA = () => {
       </div>
 
       <div className="container relative z-10 mx-auto flex flex-col items-center px-6 text-center">
-        <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-primary">
-          Act 06 — The Invitation
-        </span>
-
         <h2
-          className="mt-6 font-display font-light leading-[0.95] text-chrome"
+          className="font-display font-light leading-[0.95] text-chrome"
           style={{ fontSize: "clamp(2.75rem, 8vw, 6.5rem)" }}
         >
-          Water you'll <span className="italic text-liquid">forget</span><br />
+          Water you'll <span className="italic">forget</span><br />
           to think about.
         </h2>
 
@@ -74,7 +68,7 @@ const FinalCTA = () => {
 
         <div className="mt-20 flex items-center gap-4 font-mono text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
           <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse-dot" />
-          <span>Independent lab · 7-day turnaround · No obligation</span>
+          <span>Lab results in your inbox by next Friday.</span>
         </div>
       </div>
     </section>

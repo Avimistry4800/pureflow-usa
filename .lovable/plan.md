@@ -1,96 +1,71 @@
-## Add Three New Sections to the Homepage
+## What's making it feel AI-built
 
-Extend the cinematic single-scroll story on `/` with three new acts that fit between the existing Hero → Threat → Solution → Proof composition. The new sections deepen the narrative (how it gets installed, why it beats alternatives) and close with a strong conversion moment — without touching Hero, Threat, Solution, or Proof internals.
+The bones are strong, but every section uses the **same recipe**:
 
-### New section order on the homepage
+1. Eyebrow: `Act 0X — One Word`
+2. Headline: two lines, second line italic + cyan gradient
+3. Body paragraph in `text-muted-foreground`
+4. `surface-glass` cards in a grid
+5. Background: `grid-noise` + cyan radial glow + thin gradient hairline at top
 
-```text
-Hero                              (existing)
-  ↓
-Threat        — Act 02            (existing)
-  ↓
-Solution      — Act 03            (existing)
-  ↓
-Comparison    — Act 03.5  NEW     ← why WPL vs. pitcher / supermarket RO / bottled
-  ↓
-Process       — Act 04    NEW     ← 4-step path from inquiry to installed system
-  ↓
-Proof         — Act 05            (existing, eyebrow renumbered from 04 → 05)
-  ↓
-FinalCTA      — Act 06    NEW     ← closing conversion moment with consultation hook
-```
+That formula across 6 sections is the AI tell. Real art direction varies pace, typography, density, color, and copy voice from one section to the next.
 
-### Section 1 — Comparison (`src/components/comparison/Comparison.tsx`)
+This plan fixes the homepage only — no scope creep into routes or backend.
 
-A horizontal 4-column compare matrix that contrasts WPL against the three alternatives an American buyer typically considers.
+## Fixes (each section gets a distinct identity)
 
-- **Eyebrow**: `Act 03.5 — The Difference`
-- **Headline**: "Not all clean *is* clean."
-- **Columns**: Pitcher Filter · Supermarket RO · Bottled Service · **WPL** (highlighted)
-- **Rows**: PFAS removal · Microplastic removal · Lead reduction · Annual plastic waste · Cost over 10 yrs · Service life
-- **Visual treatment**: Glass surface, mono labels, subtle row dividers, the WPL column has a primary border + subtle glow, checkmarks/dashes use `text-primary` / `text-muted-foreground`
-- Mobile: stacks to a vertical accordion-style list with WPL pinned first
-- ~200 lines, no new dependencies
+### 1. Kill the "Act 0X" eyebrow on every section
+It reads like chapter labels in an AI-generated deck. Keep the narrative idea, but vary the device:
+- **Threat**: a moving timestamp / counter ("12,400 ppt detected — last 24h")
+- **Solution**: a serial number ("WPL-LIQ-001 / Cross-section")
+- **Comparison**: no eyebrow — open with a number ("4 ways to make water drinkable. One that lasts.")
+- **Process**: a small map line ("Inquiry → First sip")
+- **Proof**: a date range ("1992 — Present")
+- **FinalCTA**: nothing above the headline. Let it land cold.
 
-### Section 2 — Process (`src/components/process/Process.tsx`)
+### 2. Stop the italic-liquid-gradient headline tic
+Used in Hero, Solution, Comparison, Process, Proof, and FinalCTA — six times. Cap it at two uses on the page (Hero + one other). For the rest:
+- **Comparison**: all-chrome headline, single weight, no gradient. Ground it with a tabular figure underneath ("$11,000 vs $4,200 / 10 yr").
+- **Process**: numerals do the talking — set "01 02 03 04" massive across the top, headline smaller beside it.
+- **Proof**: serif-feel display weight, no italic, no gradient. Add a real-looking handwritten signature line under the testimonial.
+- **FinalCTA**: keep it, but only one italic word (not a phrase).
 
-A 4-step path showing how a customer moves from first contact to a commissioned system. Mirrors the visual rhythm of Solution's stage rail.
+### 3. Vary section backgrounds (not all `grid-noise + cyan glow`)
+- **Threat**: keep dark + contaminant field (already distinct ✓)
+- **Solution**: keep product stage (already distinct ✓)
+- **Comparison**: **swap to a paler "lab paper" surface** — slightly lifted background (`--surface-elevated`), no grid-noise, no glow. Reads like a printed datasheet.
+- **Process**: **vertical timeline rail** with a single thin animated cyan line connecting four station dots — no glass cards, just numerals + text floated against the dark. Feels like a blueprint, not a card grid.
+- **Proof**: keep the heritage arc, but **drop the 4-up sector card grid** (it's the most generic block on the page). Replace with an inline run-on sentence: "We serve residences in Aspen, dental clinics in Boston, hotels in Miami, and offices in Manhattan." Each location is a hover link. One block, one voice.
+- **FinalCTA**: keep, but remove the grid-noise — pure void + one horizontal liquid line + the CTA.
 
-- **Eyebrow**: `Act 04 — The Path`
-- **Headline**: "From inquiry to *first sip,* in four moves."
-- **Steps**:
-  1. **Free water test** — mailed kit, lab analysis returned in 7 days
-  2. **Specification** — engineer-led configuration sized to your home / building
-  3. **Installation** — certified plumber, single-day fit, zero kitchen disruption
-  4. **Stewardship** — connected monitoring, pre-emptive filter service, 30-yr build
-- **Layout**: 4 vertical cards with large step numerals (`01–04`), a connecting horizontal line through the numerals on desktop, glass surfaces on hover
-- Subtle scroll-reveal: each card fades + lifts as it enters viewport (IntersectionObserver, no GSAP)
-- ~150 lines
+### 4. Rewrite the most "GPT-flavored" copy
+Specific lines to revise (kept tight, more particular, less marketing-cadence):
 
-### Section 3 — Final CTA (`src/components/cta/FinalCTA.tsx`)
+- Hero subhead → drop "Engineered in the United Kingdom. Calibrated for the American home." (too symmetrical, too AI). Replace with something with a real detail: *"Built in Sheffield since 1992. Now plumbed into 11,000 American homes."*
+- Comparison intro → drop "The American kitchen has options. Most of them solve one problem while creating two more." Replace with: *"A pitcher buys you a week. A bottled service buys you guilt. This is what permanent looks like."*
+- Process intro → drop "No salespeople in your home. No pressure pitch." Replace with the actual sequence as a single sentence: *"Mail a sample. Read a spec. One day with a plumber. Thirty years of not thinking about it."*
+- FinalCTA microcopy → "Independent lab · 7-day turnaround · No obligation" reads like a generated chip row. Replace with: *"Lab results in your inbox by next Friday."*
 
-A full-bleed closing moment that re-asserts the brand promise and converts.
+### 5. Tighten visual repetition
+- Remove the `bg-gradient-to-r from-transparent via-primary/X to-transparent` hairline at the top of Comparison, Process, Proof, and FinalCTA — used 4 times in a row. Keep it on Proof only as a section break.
+- Cap `surface-glass` usage on the homepage at 2 surfaces (Solution info card + Threat readout). Comparison uses a flat bordered table; Process uses no card; Proof uses no sector cards.
+- Reduce cyan radial glows: keep on Hero and FinalCTA only. Comparison/Process/Proof go matte.
 
-- **Visual**: Dark bg with the same `grid-noise` + radial primary glow used in Hero/Proof, animated single horizontal liquid line that pulses
-- **Headline**: "Water you'll *forget* to think about."
-- **Sub**: "Start with a free water test. We'll handle the rest."
-- **Primary CTA**: "Request your water test" → links to `/contact` (same magnetic chrome pill style as Hero CTA, reuses `useMagnetic`)
-- **Secondary link**: "Explore the technology →" → `/technology`
-- **Footer meta strip**: mono coordinates and `EST · 1992 / LDN → NYC` to bookend the Hero
-- ~100 lines
+### 6. One human detail
+Add a single small honest moment that a template wouldn't include — e.g., a footnote under the Proof testimonial: *"Photographed at the Sheffield workshop, March 2024."* It signals a real hand on the page.
 
-### Wiring
+## Files touched
 
-**`src/pages/Home.tsx`** — add three imports and insert into the JSX in order:
+- `src/components/hero/Hero.tsx` — subhead copy only
+- `src/components/threat/Threat.tsx` — eyebrow → moving counter
+- `src/components/solution/Solution.tsx` — eyebrow → serial; remove italic-liquid in headline
+- `src/components/comparison/Comparison.tsx` — drop eyebrow, drop glass+glow background, plain headline, copy rewrite, remove top hairline
+- `src/components/process/Process.tsx` — drop eyebrow, replace card grid with vertical/horizontal timeline rail (no `surface-glass`), oversized numerals, copy rewrite
+- `src/components/proof/Proof.tsx` — eyebrow → date range, plain headline, replace 4-up sector cards with inline run-on sentence + hover links, add photo footnote
+- `src/components/cta/FinalCTA.tsx` — drop eyebrow + grid-noise, single-italic headline, microcopy rewrite
 
-```tsx
-import Comparison from "@/components/comparison/Comparison";
-import Process from "@/components/process/Process";
-import FinalCTA from "@/components/cta/FinalCTA";
+## Out of scope
 
-// ...
-<Hero />
-<Threat />
-<Solution />
-<Comparison />
-<Process />
-<Proof />
-<FinalCTA />
-```
-
-**`src/components/proof/Proof.tsx`** — single-line edit only: change the eyebrow text from `Act 04 — Heritage` to `Act 05 — Heritage` so act numbering stays sequential. No other Proof changes.
-
-### Out of scope
-
-- No changes to Hero, Threat, Solution, Nav, Footer, routes, or any other page.
-- No new assets, no new fonts, no new dependencies.
-- No CSS variable changes — all sections reuse existing tokens (`chrome`, `liquid`, `primary`, `surface-glass`, `grid-noise`, `font-display`, `font-mono`, `shadow-glow`).
-- No backend / Supabase changes — Final CTA links to existing `/contact` route which already hosts `ConsultationForm`.
-
-### Files touched
-
-- **Create** `src/components/comparison/Comparison.tsx`
-- **Create** `src/components/process/Process.tsx`
-- **Create** `src/components/cta/FinalCTA.tsx`
-- **Edit** `src/pages/Home.tsx` (3 imports, 3 JSX lines)
-- **Edit** `src/components/proof/Proof.tsx` (1 string: `Act 04` → `Act 05`)
+- No changes to `/technology`, `/about`, `/contact`, sectors, insights, footer, or nav
+- No new dependencies, no new assets, no design tokens changes (all current CSS variables remain)
+- No backend/Supabase changes

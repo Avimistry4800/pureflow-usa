@@ -70,8 +70,8 @@ const Hero = () => {
             show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
           }`}
         >
-          Engineered in the United Kingdom. Calibrated for the American home.
-          Reverse osmosis, deionization and UV sterilization—rendered invisible.
+          Built in Sheffield since 1992. Now plumbed into 11,000 American
+          homes — quietly, under the counter, for the next thirty years.
         </p>
 
         <div
