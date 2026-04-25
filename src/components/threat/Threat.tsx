@@ -305,8 +305,9 @@ const Threat = () => {
         {/* Header */}
         <div className="relative z-10 px-6 pt-28 sm:px-12">
           <div className="container mx-auto flex flex-col gap-3">
-            <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-primary">
-              Act 02 — The invisible threat
+            <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-primary tabular-nums">
+              <span className="inline-block h-1.5 w-1.5 translate-y-[-2px] rounded-full bg-primary mr-3 animate-pulse-dot" />
+              {contaminants[active].code} · live · {(contaminants[active].peakPpm * (0.4 + progress * 0.6)).toFixed(contaminants[active].peakPpm < 10 ? 2 : 0)} {contaminants[active].unit} — last 24h
             </span>
             <h2 className="max-w-3xl font-display text-4xl font-light leading-[1.05] text-chrome sm:text-6xl md:text-7xl">
               You can't see it.<br />
